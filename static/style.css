@@ -1,0 +1,42 @@
+/* 전체 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #333;
+}
+
+/* 헤더 스타일 */
+.stApp>header {
+    background-color: #f8f9fa;
+    padding: 1rem;
+}
+
+/* 사이드바 스타일 */
+.sidebar .sidebar-content {
+    background-color: #f8f9fa;
+}
+
+/* 버튼 스타일 */
+.stButton>button {
+    border-radius: 20px;
+    padding: 0.5rem 2rem;
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* 결과 컨테이너 스타일 */
+.element-container {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+/* 키워드 태그 스타일 */
+.keyword-tag {
+    background-color: #e9ecef;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    margin: 0.2rem;
+    display: inline-block;
+}

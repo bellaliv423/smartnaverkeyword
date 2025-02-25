@@ -6,6 +6,7 @@ import logging
 import json
 from datetime import datetime
 import openai
+import asyncio
 
 class ContentProcessorException(Exception):
     """콘텐츠 처리 관련 커스텀 예외"""
@@ -16,6 +17,7 @@ class ContentProcessor:
         load_dotenv()
         self.setup_logging()
         self.setup_openai()
+        self.setup_cache()  # 캐시 추가
         
     def setup_logging(self):
         """로깅 설정"""
@@ -31,42 +33,70 @@ class ContentProcessor:
 
     def setup_openai(self):
         """OpenAI API 설정"""
-        self.api_key = os.environ.get('OPENAI_API_KEY')
-        if not self.api_key:
-            raise ValueError("OpenAI API 키가 설정되지 않았습니다.")
-        
-        # OpenAI 클라이언트 초기화
         try:
-            self.client = AsyncOpenAI(api_key=self.api_key)
+            self.api_key = os.environ.get('OPENAI_API_KEY')
+            
+            if not self.api_key:
+                raise ValueError("OpenAI API 키가 설정되지 않았습니다.")
+            
+            # OpenAI 클라이언트 설정
+            self.client = AsyncOpenAI(
+                api_key=self.api_key,
+                max_retries=3
+            )
+            
+            self.logger.info("OpenAI API 설정 완료")
+            
         except Exception as e:
+            self.logger.error(f"OpenAI 설정 실패: {str(e)}")
             raise ValueError(f"OpenAI 클라이언트 초기화 실패: {str(e)}")
 
+    def setup_cache(self):
+        """캐시 설정"""
+        self.cache = {}
+        self.cache_timeout = 3600  # 1시간
+        
     async def process_content(self, content: Dict, mode: str = 'summarize') -> Dict:
         """콘텐츠 처리 메인 함수"""
         try:
             if not content or 'description' not in content:
                 raise ValueError("유효하지 않은 콘텐츠 형식입니다.")
 
+            # 캐시 확인
+            cache_key = f"{content['description'][:100]}_{mode}"
+            if cache_key in self.cache:
+                return self.cache[cache_key]
+
+            # 병렬 처리
+            tasks = []
             if mode == '요약':
-                # 500자 버전
-                summary = await self.summarize_content(content['description'], 500)
+                tasks.append(self.summarize_content(content['description'], 500))
+                tasks.append(self.extract_keywords(content['description']))
+                summary, keywords = await asyncio.gather(*tasks)
                 
-                return {
+                result = {
                     "type": "summary",
                     "title": content.get('title', ''),
                     "original_link": content.get('link', ''),
                     "short_version": summary['content'],
-                    "keywords": await self.extract_keywords(content['description'])
+                    "keywords": keywords
                 }
-            else:  # 재구성 모드
-                restructured = await self.restructure_content(content)
-                return {
+            else:
+                tasks.append(self.restructure_content(content))
+                tasks.append(self.extract_keywords(content['description']))
+                restructured, keywords = await asyncio.gather(*tasks)
+                
+                result = {
                     "type": "restructured",
                     "title": content.get('title', ''),
                     "original_link": content.get('link', ''),
                     "long_version": restructured['content'],
-                    "keywords": await self.extract_keywords(restructured['content'])
+                    "keywords": keywords
                 }
+
+            # 결과 캐시에 저장
+            self.cache[cache_key] = result
+            return result
                 
         except Exception as e:
             self.logger.error(f"콘텐츠 처리 중 오류 발생: {str(e)}")
@@ -158,55 +188,99 @@ class ContentProcessor:
             self.logger.error(f"키워드 추출 중 오류 발생: {str(e)}")
             return []
 
-    async def translate_content(self, content: str, target_lang: str = 'en') -> Dict:
+    async def translate_content(self, text: str, target_lang: str) -> Dict:
         """콘텐츠 번역"""
         try:
-            lang_codes = {
-                'en': '영어',
-                'ja': '일본어',
-                'zh-CN': '중국어(간체)',
-                'zh-TW': '중국어(번체)',
-                'ko': '한국어'
+            # 언어별 프롬프트 설정
+            lang_prompts = {
+                '중국어(간체)': '请将以下韩语内容翻译成简体中文：',
+                '중국어(번체)': '請將以下韓語內容翻譯成繁體中文：',
+                '영어': 'Please translate the following Korean text to English:',
+                '일본어': '以下の韓国語の内容を日本語に翻訳してください：'
             }
-            
-            # 중국어 번역을 위한 특별 프롬프트 추가
-            if target_lang.startswith('zh'):
-                system_prompt = f"""
-                다음 내용을 {lang_codes.get(target_lang, target_lang)}로 번역해주세요.
-                번역시 다음 규칙을 따라주세요:
-                1. 자연스러운 표현 사용
-                2. 전문 용어는 정확하게 번역
-                3. 문맥을 고려한 번역
-                4. 원문의 뉘앙스 유지
-                5. {'번체자를 사용해주세요.' if target_lang == 'zh-TW' else '간체자를 사용해주세요.'}
-                """
-            else:
-                system_prompt = f"""
-                다음 내용을 {lang_codes.get(target_lang, target_lang)}로 번역해주세요.
-                번역시 다음 규칙을 따라주세요:
-                1. 자연스러운 표현 사용
-                2. 전문 용어는 정확하게 번역
-                3. 문맥을 고려한 번역
-                4. 원문의 뉘앙스 유지
-                """
 
+            prompt = lang_prompts.get(target_lang, f'다음 내용을 {target_lang}로 번역해주세요:')
+            
             response = await self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": content}
+                    {
+                        "role": "system",
+                        "content": "You are a professional translator."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"{prompt}\n\n{text}"
+                    }
                 ],
                 temperature=0.3,
-                max_tokens=2000
+                max_tokens=1500
             )
 
-            translated = response.choices[0].message.content
+            translated = response.choices[0].message.content.strip()
+            
+            if not translated:
+                raise ValueError("번역 결과가 비어있습니다.")
+
             return {
                 "translated_text": translated,
-                "source_text": content,
+                "source_text": text,
                 "target_language": target_lang
             }
-            
+
         except Exception as e:
             self.logger.error(f"번역 중 오류 발생: {str(e)}")
-            raise ContentProcessorException(f"번역 실패: {str(e)}") 
+            return {
+                "error": str(e),
+                "source_text": text,
+                "target_language": target_lang
+            }
+
+    async def process_content_async(self, content, mode="재구성"):
+        try:
+            if mode == "재구성":
+                prompt = f"다음 내용을 1000자로 재구성해주세요:\n{content['description']}"
+                max_tokens = 1000
+            else:
+                prompt = f"다음 내용을 500자로 요약해주세요:\n{content['description']}"
+                max_tokens = 500
+
+            response = await openai.ChatCompletion.acreate(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+
+            processed_text = response.choices[0].message.content
+
+            return {
+                'type': 'restructured' if mode == "재구성" else 'summary',
+                'original_title': content['title'],
+                'long_version': processed_text if mode == "재구성" else None,
+                'short_version': processed_text if mode == "요약" else None,
+                'keywords': ['키워드1', '키워드2', '키워드3'],  # 임시 데이터
+                'source_url': content['link']
+            }
+        except Exception as e:
+            print(f"Error in process_content: {str(e)}")
+            raise
+
+    async def translate_content_async(self, text, target_lang):
+        try:
+            response = await openai.ChatCompletion.acreate(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": f"Translate the following text to {target_lang}:"},
+                    {"role": "user", "content": text}
+                ]
+            )
+            
+            return {
+                'translated_text': response.choices[0].message.content,
+                'target_language': target_lang
+            }
+        except Exception as e:
+            print(f"Error in translate_content: {str(e)}")
+            raise 

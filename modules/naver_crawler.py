@@ -21,6 +21,8 @@ from datetime import datetime, timedelta
 import platform
 import shutil
 import re
+import urllib.parse
+from typing import List, Dict
 
 class NaverCrawlerException(Exception):
     """네이버 크롤러 관련 커스텀 예외"""
@@ -38,14 +40,9 @@ class NaverCrawler:
     def __init__(self):
         load_dotenv()
         self.setup_logging()
+        self.setup_api()
         
         try:
-            # API 키 검증
-            self.client_id = os.getenv('NAVER_CLIENT_ID')
-            self.client_secret = os.getenv('NAVER_CLIENT_SECRET')
-            if not self.client_id or not self.client_secret:
-                raise Exception("네이버 API 키가 설정되지 않았습니다.")
-            
             # 세션 설정
             self.setup_session()
             
@@ -67,69 +64,28 @@ class NaverCrawler:
 
     def setup_logging(self):
         """로깅 설정"""
-        try:
-            # 현재 작업 디렉토리 기준으로 로그 경로 설정
-            log_path = os.path.join(os.getcwd(), 'logs')
-            if not os.path.exists(log_path):
-                os.makedirs(log_path)
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+        
+    def setup_api(self):
+        """네이버 API 설정"""
+        self.client_id = os.getenv('NAVER_CLIENT_ID')
+        self.client_secret = os.getenv('NAVER_CLIENT_SECRET')
+        self.api_url = os.getenv('NAVER_API_URL')
+        
+        if not all([self.client_id, self.client_secret, self.api_url]):
+            raise ValueError("네이버 API 설정이 올바르지 않습니다.")
             
-            log_file = os.path.join(log_path, 'crawler.log')
-            
-            # 로깅 설정
-            self.logger = logging.getLogger('NaverCrawler')
-            self.logger.setLevel(logging.INFO)
-            
-            # 파일 핸들러 추가
-            file_handler = logging.FileHandler(log_file, encoding='utf-8')
-            file_handler.setLevel(logging.INFO)
-            
-            # 포맷터 설정
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            file_handler.setFormatter(formatter)
-            
-            # 핸들러 추가
-            self.logger.addHandler(file_handler)
-            
-        except Exception as e:
-            print(f"로깅 설정 중 오류 발생: {str(e)}")
-            raise
-
-    def setup_chrome_driver(self):
-        """크롬 드라이버 설정"""
-        try:
-            chrome_options = webdriver.ChromeOptions()
-            chrome_options.add_argument('--headless=new')
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--window-size=1920x1080')
-            
-            # ChromeDriver 자동 설치 및 설정
-            service = Service(ChromeDriverManager().install())
-            
-            # Chrome 브라우저 실행
-            self.driver = webdriver.Chrome(
-                service=service,
-                options=chrome_options
-            )
-            
-            self.driver.set_page_load_timeout(30)
-            self.logger.info("크롬 드라이버 설정 완료")
-            
-        except Exception as e:
-            self.logger.error(f"크롬 드라이버 설정 중 오류 발생: {str(e)}")
-            # 웹드라이버 없이도 작동할 수 있도록 설정
-            self.driver = None
-
+        self.headers = {
+            "X-Naver-Client-Id": self.client_id,
+            "X-Naver-Client-Secret": self.client_secret
+        }
+        
     def setup_session(self):
         """세션 설정"""
         try:
             self.session = requests.Session()
-            self.headers = {
-                "X-Naver-Client-Id": self.client_id,
-                "X-Naver-Client-Secret": self.client_secret,
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            }
+            self.base_url = self.api_url
             self.session.headers.update(self.headers)
             
             # 세션 연결 테스트
@@ -139,20 +95,27 @@ class NaverCrawler:
             
         except Exception as e:
             self.logger.error(f"세션 설정 중 오류 발생: {str(e)}")
-            raise ConnectionError(f"네이버 API 연결 테스트 실패: {str(e)}")
+            raise ConnectionError(f"네이버 API 연결 실패: {str(e)}")
 
     def test_connection(self):
-        url = "https://openapi.naver.com/v1/search/news.json"
-        params = {"query": "test", "display": 1}
-        
-        response = requests.get(
-            url,
-            headers=self.headers,
-            params=params
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"네이버 API 연결 테스트 실패: {response.status_code} {response.text}")
+        """API 연결 테스트"""
+        try:
+            url = f"{self.base_url}/v1/search/news.json"
+            params = {
+                "query": "naver",
+                "display": 1
+            }
+            
+            response = self.session.get(
+                url,
+                params=params
+            )
+            
+            if response.status_code != 200:
+                raise Exception(f"API 응답 오류: {response.status_code} - {response.text}")
+            
+        except Exception as e:
+            raise Exception(f"연결 테스트 실패: {str(e)}")
 
     def get_dynamic_delay(self, endpoint):
         """동적 딜레이 계산"""
@@ -241,42 +204,34 @@ class NaverCrawler:
                 self.logger.warning(f"재시도 {attempt + 1}/{max_retries}: {str(e)}")
                 time.sleep(delay * (attempt + 1))  # 지수 백오프
 
-    def get_blog_contents(self, keyword, count=5):
-        """블로그 콘텐츠를 검색합니다."""
+    def get_blog_contents(self, query: str, display: int = 5) -> List[Dict]:
+        """블로그 검색"""
         try:
             self.get_dynamic_delay('blog_search')
-            url = "https://openapi.naver.com/v1/search/blog.json"
+            endpoint = f"{self.api_url}/v1/search/blog.json"
             params = {
-                "query": keyword,
-                "display": count * 2,  # 더 많은 결과를 가져와서 필터링
-                "sort": "date"
+                "query": query,
+                "display": display,
+                "sort": "sim"
             }
             
-            response = self.session.get(url, params=params, headers=self.headers)
+            response = self.session.get(endpoint, params=params)
             response.raise_for_status()
-            items = response.json().get('items', [])
             
-            # 키워드 관련성 체크 및 필터링
-            filtered_items = []
-            for item in items:
-                # HTML 태그 제거
-                title = re.sub('<[^<]+?>', '', item['title'])
-                description = re.sub('<[^<]+?>', '', item['description'])
-                
-                # 제목이나 설명에 키워드가 포함된 경우만 선택
-                if keyword.lower() in title.lower() or keyword.lower() in description.lower():
-                    is_hot = self.check_hot_topic(title, description)
-                    filtered_items.append({
-                        "title": title,
-                        "link": item['link'],
-                        "description": description,
-                        "tags": ['#핫토픽', '#트렌드'] if is_hot else []
-                    })
-                
-                if len(filtered_items) >= count:
-                    break
+            results = response.json().get('items', [])
+            processed_results = []
             
-            return filtered_items[:count]
+            for item in results:
+                processed_item = {
+                    'title': BeautifulSoup(item['title'], 'html.parser').get_text(),
+                    'description': BeautifulSoup(item['description'], 'html.parser').get_text(),
+                    'link': item['link'],
+                    'bloggername': item['bloggername'],
+                    'tags': []  # 키워드 추출용 빈 리스트
+                }
+                processed_results.append(processed_item)
+                
+            return processed_results
             
         except Exception as e:
             self.logger.error(f"블로그 검색 중 오류 발생: {str(e)}")
@@ -328,7 +283,7 @@ class NaverCrawler:
         try:
             self.logger.info(f"뉴스 검색 시작: 키워드='{keyword}', 요청 개수={count}")
             
-            url = "https://openapi.naver.com/v1/search/news.json"
+            url = f"{self.api_url}/v1/search/news.json"
             params = {
                 "query": keyword,
                 "display": count * 2,
@@ -401,34 +356,26 @@ class NaverCrawler:
             
         return contents
     
-    def get_related_keywords(self, keyword):
-        """연관 검색어를 가져옵니다."""
+    def get_related_keywords(self, query: str) -> List[str]:
+        """연관 검색어 추출"""
         try:
-            self.get_dynamic_delay('related_keywords')
-            url = "https://ac.search.naver.com/nx/ac"
-            params = {
-                "q": keyword,
-                "q_enc": "UTF-8",
-                "st": "100",
-                "frm": "nv",
-                "r_format": "json",
-                "r_enc": "UTF-8",
-                "r_unicode": "0",
-                "t_koreng": "1",
-                "ans": "2"
-            }
-            
-            response = self.session.get(url, params=params)
+            # 네이버 검색 페이지에서 연관 검색어 크롤링
+            search_url = f"https://search.naver.com/search.naver?query={query}"
+            response = requests.get(search_url)
             response.raise_for_status()
-            data = response.json()
             
-            if data and 'items' in data and data['items']:
-                keywords = [item[0] for item in data['items'][0]][:10]
-                return [f"#{k}" for k in keywords]  # 해시태그 형식으로 반환
-            return []
+            soup = BeautifulSoup(response.text, 'html.parser')
+            related_keywords = []
+            
+            # 연관 검색어 추출 (실제 구현 시 네이버 HTML 구조에 맞게 수정 필요)
+            keyword_elements = soup.select('.related_srch .keyword')
+            for element in keyword_elements:
+                related_keywords.append(element.get_text().strip())
+                
+            return related_keywords
             
         except Exception as e:
-            self.logger.error(f"연관 검색어 조회 중 오류 발생: {str(e)}")
+            self.logger.error(f"연관 검색어 추출 중 오류 발생: {str(e)}")
             return []
 
     def clear_expired_cache(self):
@@ -548,36 +495,36 @@ class NaverCrawler:
         
         return "콘텐츠를 찾을 수 없습니다."
 
-    def search_news(self, keyword, display=15):
-        """네이버 뉴스 검색 API를 사용하여 뉴스를 검색합니다."""
+    def search_news(self, query: str, display: int = 10) -> List[Dict]:
+        """뉴스 검색"""
         try:
-            url = "https://openapi.naver.com/v1/search/news.json"
+            endpoint = f"{self.api_url}/v1/search/news.json"
             params = {
-                "query": keyword,
-                "display": 30,  # 더 많은 결과를 가져와서 필터링
-                "sort": "date"
+                "query": query,
+                "display": display,
+                "sort": "sim"
             }
             
-            response = requests.get(url, headers=self.headers, params=params)
+            response = requests.get(endpoint, headers=self.headers, params=params)
             response.raise_for_status()
-            items = response.json().get('items', [])
             
-            # 키워드 관련성 체크 및 필터링
-            filtered_items = []
-            for item in items:
-                # 제목이나 설명에 키워드가 포함된 경우만 선택
-                if keyword.lower() in item['title'].lower() or keyword.lower() in item['description'].lower():
-                    is_hot = self.check_hot_topic(item['title'], item['description'])
-                    item['tags'] = ['#핫토픽', '#핫이슈'] if is_hot else []
-                    filtered_items.append(item)
+            results = response.json().get('items', [])
+            processed_results = []
+            
+            for item in results:
+                processed_item = {
+                    'title': BeautifulSoup(item['title'], 'html.parser').get_text(),
+                    'description': BeautifulSoup(item['description'], 'html.parser').get_text(),
+                    'link': item['link'],
+                    'pubDate': item['pubDate'],
+                    'tags': []  # 키워드 추출용 빈 리스트
+                }
+                processed_results.append(processed_item)
                 
-                if len(filtered_items) >= display:
-                    break
-            
-            return filtered_items[:display]
+            return processed_results
             
         except Exception as e:
-            print(f"뉴스 검색 중 오류 발생: {str(e)}")
+            self.logger.error(f"뉴스 검색 중 오류 발생: {str(e)}")
             return []
 
     def get_random_content(self, keyword, count=5):

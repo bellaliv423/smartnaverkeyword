@@ -266,3 +266,137 @@
 2025-02-23 16:07:14,636 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
 2025-02-23 16:07:14,781 - NaverCrawler - INFO - 검색 결과: 총 3903466개 중 20개 수신
 2025-02-23 16:07:14,783 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-24 23:19:03,916 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:19:03,917 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:21:24,966 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:21:24,966 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:21:24,967 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:21:24,967 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:46:32,264 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:46:32,265 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:51:54,760 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:51:54,760 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:52:05,999 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:52:05,999 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:52:05,999 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-24 23:52:05,999 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:14,606 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:14,607 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:27,307 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:27,308 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:41,262 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:41,262 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:41,262 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:04:41,262 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:35,668 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:35,668 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:59,487 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:59,487 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:59,488 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:14:59,488 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 네이버 API 연결 테스트 실패: 401 {"errorMessage":"NID AUTH Result Invalid (1000) : Authentication failed. (인증에 실패했습니다.)","errorCode":"024"}
+2025-02-25 00:35:05,114 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:35:05,115 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:43,131 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:43,131 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:48,535 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:48,535 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:48,535 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:37:48,535 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:08,447 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:08,448 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:23,289 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:23,289 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:23,290 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:39:23,290 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:41:26,379 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:41:26,380 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:42:46,789 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:42:46,789 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:43:05,985 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:43:05,985 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:43:05,986 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:43:05,986 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:44:50,880 - NaverCrawler - ERROR - 세션 설정 중 오류 발생: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:44:50,881 - NaverCrawler - ERROR - 초기화 중 오류 발생: 네이버 API 연결 실패: 연결 테스트 실패: 'latin-1' codec can't encode characters in position 0-1: ordinal not in range(256)
+2025-02-25 00:46:32,413 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 00:46:32,414 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 00:46:34,627 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 00:46:34,627 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 00:46:43,915 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 00:46:44,196 - NaverCrawler - INFO - 검색 결과: 총 3908567개 중 20개 수신
+2025-02-25 00:46:44,199 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 00:58:41,038 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 00:58:41,039 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 00:59:12,842 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 00:59:12,946 - NaverCrawler - INFO - 검색 결과: 총 3908571개 중 20개 수신
+2025-02-25 00:59:12,947 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:15:30,510 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:15:30,511 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:15:40,494 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:15:40,726 - NaverCrawler - INFO - 검색 결과: 총 3908576개 중 20개 수신
+2025-02-25 01:15:40,727 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:21:26,309 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:21:26,310 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:21:35,462 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:21:35,669 - NaverCrawler - INFO - 검색 결과: 총 3908578개 중 20개 수신
+2025-02-25 01:21:35,672 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:24:02,914 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:24:02,914 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:24:13,855 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:24:13,973 - NaverCrawler - INFO - 검색 결과: 총 3908579개 중 20개 수신
+2025-02-25 01:24:13,974 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:32:52,320 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:32:52,321 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:33:04,054 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:33:04,249 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:33:04,253 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:35:52,610 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:35:52,610 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:36:09,288 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:36:09,590 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:36:09,591 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:37:32,907 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:37:32,907 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:37:32,908 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:37:32,908 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:37:42,099 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:37:42,099 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:37:42,237 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:37:42,237 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:37:42,239 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:37:42,239 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:39:33,610 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:39:33,610 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:39:33,610 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:39:33,611 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:39:33,611 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:39:33,611 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:39:42,861 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:39:42,861 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:39:42,861 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:39:43,034 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:39:43,034 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:39:43,034 - NaverCrawler - INFO - 검색 결과: 총 3908581개 중 20개 수신
+2025-02-25 01:39:43,037 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:39:43,037 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:39:43,037 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:42:58,068 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:42:58,069 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:43:15,184 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:43:15,438 - NaverCrawler - INFO - 검색 결과: 총 3908582개 중 20개 수신
+2025-02-25 01:43:15,441 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:46:19,893 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:46:19,894 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:46:41,954 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:46:42,125 - NaverCrawler - INFO - 검색 결과: 총 3908582개 중 20개 수신
+2025-02-25 01:46:42,126 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 01:53:24,173 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 01:53:24,174 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 01:53:49,165 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 01:53:49,349 - NaverCrawler - INFO - 검색 결과: 총 3908582개 중 20개 수신
+2025-02-25 01:53:49,350 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택
+2025-02-25 02:00:09,700 - NaverCrawler - INFO - 네이버 API 세션 설정 완료
+2025-02-25 02:00:09,700 - NaverCrawler - INFO - 네이버 크롤러 초기화 완료
+2025-02-25 02:00:19,713 - NaverCrawler - INFO - 뉴스 검색 시작: 키워드='ai', 요청 개수=10
+2025-02-25 02:00:19,926 - NaverCrawler - INFO - 검색 결과: 총 3908582개 중 20개 수신
+2025-02-25 02:00:19,928 - NaverCrawler - INFO - 최종 필터링 결과: 10개의 기사 선택

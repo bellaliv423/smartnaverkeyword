@@ -23,17 +23,13 @@ class ContentUploader:
         self.setup_logging()
         self.setup_notion()
         self.setup_obsidian()
+        self.upload_dir = os.getenv('UPLOAD_DIRECTORY', 'uploaded_contents')
+        if not os.path.exists(self.upload_dir):
+            os.makedirs(self.upload_dir)
         
     def setup_logging(self):
         """로깅 설정"""
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler('uploader.log'),
-                logging.StreamHandler()
-            ]
-        )
+        logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
     def setup_notion(self):
@@ -162,16 +158,39 @@ class ContentUploader:
                 "message": str(e)
             }
 
-    def copy_to_clipboard(self, content: str) -> bool:
+    def format_content(self, content: Dict) -> str:
+        """콘텐츠 포맷팅"""
+        try:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M")
+            
+            # 마크다운 형식으로 포맷팅
+            formatted = f"""# {content.get('title', '제목 없음')}
+
+## 메타 정보
+- 작성일: {now}
+- 원본 링크: {content.get('original_link', '')}
+
+## 내용
+{content.get('long_version', content.get('short_version', ''))}
+
+## 키워드
+{' '.join(content.get('keywords', []))}
+"""
+            return formatted
+            
+        except Exception as e:
+            self.logger.error(f"콘텐츠 포맷팅 중 오류 발생: {str(e)}")
+            return str(content)
+
+    def copy_to_clipboard(self, content: str) -> str:
         """클립보드에 복사"""
         try:
-            formatted_content = f"""```
-{content}
-```"""
+            formatted_content = self.format_content(content)
+            pyperclip.copy(formatted_content)
             return formatted_content
         except Exception as e:
-            self.logger.error(f"콘텐츠 포맷팅 중 오류: {str(e)}")
-            raise ContentUploaderException("콘텐츠 포맷팅 실패")
+            self.logger.error(f"클립보드 복사 중 오류 발생: {str(e)}")
+            return content
 
     def convert_to_markdown(self, content: Dict) -> str:
         """콘텐츠를 마크다운 형식으로 변환"""
@@ -204,52 +223,20 @@ class ContentUploader:
     def save_to_obsidian(self, content: Dict) -> Dict:
         """옵시디언에 저장"""
         try:
-            # 옵시디언 볼트 경로 확인
-            vault_path = os.getenv('OBSIDIAN_VAULT_PATH')
-            if not vault_path:
-                vault_path = os.path.join(os.path.expanduser('~'), 'Documents/Obsidian/Vault')
+            filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+            filepath = os.path.join(self.upload_dir, filename)
             
-            if not os.path.exists(vault_path):
-                os.makedirs(vault_path)
-            
-            # 파일명 생성 (현재 시간 + 제목)
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            safe_title = "".join(c for c in content['title'] if c.isalnum() or c in (' ', '-', '_')).strip()
-            filename = f"{timestamp}_{safe_title[:30]}.md"
-            filepath = os.path.join(vault_path, filename)
-            
-            # 마크다운 내용 생성
-            md_content = f"""---
-title: {content['title']}
-date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-type: {content['type']}
----
-
-# {content['title']}
-
-## 원본 링크
-{content.get('original_link', '')}
-
-## {'요약 (500자)' if content['type'] == 'summary' else '재구성 (1000자)'}
-{content.get('short_version' if content['type'] == 'summary' else 'long_version', '')}
-
-## 키워드
-{' '.join(content.get('keywords', []))}
-
----
-생성일시: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-"""
-            
-            # 파일 저장
             with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(md_content)
+                f.write(self.copy_to_clipboard(
+                    content['long_version'] if content['type'] == 'restructured' 
+                    else content['short_version']
+                ))
             
             return {
                 "status": "success",
-                "message": "옵시디언에 저장되었습니다",
+                "message": "옵시디언에 저장되었습니다.",
                 "path": filepath
             }
-            
         except Exception as e:
             self.logger.error(f"옵시디언 저장 중 오류: {str(e)}")
             raise ContentUploaderException(f"옵시디언 저장 실패: {str(e)}")

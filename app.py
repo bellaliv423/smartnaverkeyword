@@ -1,47 +1,45 @@
 import streamlit as st
+from modules.content_processor import ContentProcessor
+from modules.naver_crawler import NaverCrawler
+import asyncio
+import logging
+from datetime import datetime
+from flask import Flask, jsonify
+import os
+from dotenv import load_dotenv
 
-# 반드시 다른 st 명령어보다 먼저 실행되어야 함
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# 페이지 설정
 st.set_page_config(
     page_title="스마트 키워드 콘텐츠 추출기",
     page_icon="📰",
     layout="wide"
 )
 
-# 이후 다른 import문들
-import os
-from dotenv import load_dotenv
+# Streamlit Cloud 환경 확인
+is_cloud = st.runtime.exists()
 
-# 환경변수 로딩을 가장 먼저
-try:
-    # 현재 스크립트 경로 확인
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    env_path = os.path.join(current_dir, '.env')
-    
-    # 환경변수 로드
-    load_dotenv(dotenv_path=env_path, override=True)
-    
-    # 환경변수 값 확인
-    naver_client_id = os.getenv('NAVER_CLIENT_ID')
-    naver_client_secret = os.getenv('NAVER_CLIENT_SECRET')
-    
-    # 환경변수가 제대로 로드되었는지 확인
-    if not naver_client_id or not naver_client_secret:
-        raise Exception("네이버 API 키가 설정되지 않았습니다.")
-    
-    # 디버깅용 출력 제거
-    st.success("환경 변수가 성공적으로 로드되었습니다.")
-    
-except Exception as e:
-    st.error(f"환경변수 로딩 오류: {str(e)}")
+if is_cloud:
+    # Streamlit Cloud 환경
+    naver_client_id = st.secrets["api_credentials"]["NAVER_CLIENT_ID"]
+    naver_client_secret = st.secrets["api_credentials"]["NAVER_CLIENT_SECRET"]
+    naver_api_url = st.secrets["api_credentials"]["NAVER_API_URL"]
+    openai_api_key = st.secrets["api_credentials"]["OPENAI_API_KEY"]
+else:
+    # 로컬 환경
+    load_dotenv()
+    naver_client_id = os.getenv("NAVER_CLIENT_ID")
+    naver_client_secret = os.getenv("NAVER_CLIENT_SECRET")
+    naver_api_url = os.getenv("NAVER_API_URL")
+    openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # 나머지 imports
-from modules.naver_crawler import NaverCrawler
-from modules.content_processor import ContentProcessor
 from modules.content_uploader import ContentUploader
 import time
-from datetime import datetime
 import json
-import asyncio
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
 # 세션 상태 초기화
@@ -85,29 +83,22 @@ with st.sidebar:
         )
     
     with st.expander("🤖 AI 처리 설정", expanded=True):
-        ai_mode = st.selectbox(
+        process_mode = st.selectbox(
             "처리 모드",
-            options=["재구성 (1000자)", "요약 (500자)"],
+            options=["재구성", "요약"],
             help="AI가 콘텐츠를 처리하는 방식을 선택합니다."
         )
         
-        translation_enabled = st.checkbox(
+        translate_enabled = st.checkbox(
             "번역 활성화",
             value=False,
             help="처리된 콘텐츠를 다른 언어로 번역합니다."
         )
         
-        if translation_enabled:
+        if translate_enabled:
             target_language = st.selectbox(
                 "번역 언어",
-                options=[
-                    "영어 (en)", 
-                    "일본어 (ja)", 
-                    "중국어(간체) (zh-CN)",
-                    "중국어(번체) (zh-TW)", 
-                    "한국어 (ko)"
-                ],
-                format_func=lambda x: x.split(" (")[0],
+                options=["영어", "일본어", "중국어(간체)", "중국어(번체)"],
                 help="번역할 목표 언어를 선택합니다."
             )
     
@@ -128,14 +119,14 @@ col1, col2 = st.columns([1, 2])
 
 with col1:
     st.subheader("🔍 키워드 검색")
-    keyword = st.text_input(
+    search_keywords = st.text_input(
         "검색 키워드",
         placeholder="검색할 키워드를 입력하세요",
         help="뉴스와 블로그에서 검색할 키워드를 입력합니다."
     )
     
     if st.button("검색 시작", use_container_width=True):
-        if not keyword:
+        if not search_keywords:
             st.error("키워드를 입력해주세요!")
         else:
             with st.spinner("🔍 콘텐츠를 검색하고 있습니다..."):
@@ -151,19 +142,19 @@ with col1:
                     # 뉴스 검색
                     status_text.text("뉴스 검색 중...")
                     progress_bar.progress(20)
-                    news_results = st.session_state.crawler.get_news_articles(keyword, news_count)
+                    news_results = st.session_state.crawler.search_news(search_keywords, news_count)
                     st.session_state.news_results = news_results
                     
                     # 블로그 검색
                     status_text.text("블로그 검색 중...")
                     progress_bar.progress(50)
-                    blog_results = st.session_state.crawler.get_blog_contents(keyword, blog_count)
+                    blog_results = st.session_state.crawler.get_blog_contents(search_keywords, blog_count)
                     st.session_state.blog_results = blog_results
                     
                     # 연관 키워드 검색
                     status_text.text("연관 키워드 검색 중...")
                     progress_bar.progress(80)
-                    related_keywords = st.session_state.crawler.get_related_keywords(keyword)
+                    related_keywords = st.session_state.crawler.get_related_keywords(search_keywords)
                     st.session_state.related_keywords = related_keywords
                     
                     progress_bar.progress(100)
@@ -250,19 +241,16 @@ if 'news_results' in st.session_state or 'blog_results' in st.session_state:
                     
                     # AI 처리
                     result = loop.run_until_complete(
-                        processor.process_content(selected_content, 
-                                               mode="재구성" if "재구성" in ai_mode else "요약")
+                        processor.process_content(selected_content, process_mode)
                     )
                     
                     # 번역 처리
-                    if translation_enabled:
-                        lang_code = target_language.split(" (")[1].rstrip(")")
-                        content_to_translate = result['long_version'] if "재구성" in ai_mode else result['short_version']
-                        translation_result = loop.run_until_complete(
-                            processor.translate_content(content_to_translate, lang_code)
+                    if translate_enabled:
+                        translated = loop.run_until_complete(
+                            processor.translate_content(result['long_version'], target_language)
                         )
-                        result['translated_text'] = translation_result['translated_text']
-                        result['target_language'] = lang_code
+                        result['translated_text'] = translated['translated_text']
+                        result['target_language'] = target_language
                     
                     st.session_state.ai_result = result
                     st.success("처리가 완료되었습니다!")
@@ -278,7 +266,7 @@ if 'ai_result' in st.session_state:
     st.subheader("📝 처리 결과")
     
     tabs = ["원문"]
-    if translation_enabled:
+    if translate_enabled:
         tabs.append("번역본")
     
     result_tabs = st.tabs(tabs)
@@ -291,9 +279,9 @@ if 'ai_result' in st.session_state:
             st.markdown("### 재구성 (1000자)")
             st.markdown(st.session_state.ai_result['long_version'])
     
-    if translation_enabled and len(result_tabs) > 1:
+    if translate_enabled and len(result_tabs) > 1:
         with result_tabs[1]:
-            st.markdown(f"### 번역본 ({target_language.split(' (')[0]})")
+            st.markdown(f"### 번역본 ({target_language})")
             st.markdown(st.session_state.ai_result.get('translated_text', ''))
     
     # 키워드 표시
@@ -307,7 +295,7 @@ if 'ai_result' in st.session_state:
 
     # 저장 기능 추가
     st.markdown("---")
-    st.subheader("💾 저장")
+    st.subheader("📝 저장")
     
     col1, col2 = st.columns(2)
     
@@ -369,4 +357,13 @@ st.markdown(
 )
 
 class APIKeyError(Exception):
-    pass 
+    pass
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return jsonify({"message": "네이버 키워드 API 서비스"})
+
+if __name__ == '__main__':
+    app.run(debug=True) 
